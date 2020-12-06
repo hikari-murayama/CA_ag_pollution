@@ -11,7 +11,6 @@ import pandas as pd
 from io import StringIO
 import geopandas as gpd
 import numpy as np
-from scipy import fft, ifft, signal
 
 import geojson # an extension of JSON with support for geographic data
 
@@ -29,15 +28,6 @@ options["url"] = "http://www.airnowapi.org/aq/data/"
 options["start_hour_utc"] = "00"
 options["end_hour_utc"] = "23"
 options["parameters"] = "OZONE,PM25,PM10,CO,NO2,SO2"
-
-### BOUNDING BOX NEEDS TO BE SMALL TO NOT HIT UPPER LIMIT
-# tracts_gdf = gpd.read_file("zip://../indata/census/Tracts/cb_2018_06_tract_500k.zip")
-# tracts_gdf = tracts_gdf.to_crs('epsg:4326')
-# xmin, ymin, xmax, ymax = tracts_gdf.total_bounds
-# # Divide into increments of
-# inc = 10
-# min_list = [ymin + (ymax-ymin)/10*i for i in range(inc)]
-# max_list = [ymin + (ymax-ymin)/10*(i+1) for i in range(inc)]
 
 # Find all monitor locations
 REQUEST_URL =  'http://www.airnowapi.org/aq/data/?startDate=2020-05-28T17&endDate=2020-05-28T18&parameters=OZONE,PM25,PM10,CO,NO2,SO2&BBOX=-124.590836,32.683014,-114.307632,42.022513&dataType=A&format=application/json&verbose=1&nowcastonly=0&includerawconcentrations=0&API_KEY=C0A6EC3C-BBB2-49DD-92EF-0A9D67999AD0'
