@@ -27,21 +27,6 @@ path = 'data/NACP_Vista_CA_CH4_Inventory_1726/data'
 def listdirs(path):
     return [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
 
-
-# # Read in vista points and separate by month
-# alldafiles = listdirs('data/NACP_Vista_CA_CH4_Inventory_1726/data')
-# imported_files = [gpd.read_file(path + '/' + i + '/' + i + '.shp') for i in alldafiles]
-# gdf = gpd.GeoDataFrame(pd.concat(imported_files, ignore_index=True), crs=imported_files[0].crs)
-
-# for subdir in listdirs('data/NACP_Vista_CA_CH4_Inventory_1726/data'):
-#     points_gdf = gpd.read_file(path + '/' + subdir + '/' + subdir + '.shp')
-    
-#     # Create 20m buffer
-#     poly_gdf = points_gdf.copy()
-#     poly_gdf["geometry"] =points_gdf.geometry.buffer(.1)
-
-
-
 def extract_tropomi(pollutant, pollutant_tif):
     # Load & plot the data
     pollutant_path = os.path.join("data", "google_earth_engine", pollutant_tif)
@@ -61,8 +46,10 @@ def extract_tropomi(pollutant, pollutant_tif):
         points_gdf = gpd.read_file(path + '/' + subdir + '/' + subdir + '.shp')
         
         # Create 20m buffer
-        poly_gdf = points_gdf.copy()
-        poly_gdf["geometry"] =points_gdf.geometry.buffer(.5)
+        poly_gdf_1 = points_gdf.copy()
+        poly_gdf_2 = poly_gdf_1.to_crs('EPSG:3310')
+        poly_gdf_2['geometry'] = poly_gdf_2.geometry.buffer(1500)
+        poly_gdf = poly_gdf_2.to_crs('EPSG:4326')
         
         # Extract zonal stats
         zonal_stats_df = []
@@ -91,6 +78,5 @@ def extract_tropomi(pollutant, pollutant_tif):
 
 pollutant_tifs = ['CH4_2019.tif','O3_2019.tif','SO2_2019.tif','NO2_2019.tif']
 pollutants = ['CH4','O3','SO2','NO2']
-extract_tropomi(pollutants[3], pollutant_tifs[3]) 
 for i in range(len(pollutants)):
    extract_tropomi(pollutants[i], pollutant_tifs[i]) 

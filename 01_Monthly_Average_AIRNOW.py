@@ -22,7 +22,7 @@ register_matplotlib_converters()
 
 # Take all hourly data
 base = "output/air_now/"
-folder = base + "raw/by_location_hour"
+folder = base + "raw/by_hour"
 files = [x for x in os.listdir(folder) if x.endswith(".csv")]
 
 # Append all data
@@ -39,6 +39,11 @@ df_all['day_of_week'] = df_all['date'].dt.dayofweek
 df_all['year'] = df_all['date'].dt.year
 df_all['month'] = df_all['date'].dt.month
 
+# Replace null values with na
+df_all['RawConcentration'] = df_all['RawConcentration'].replace(-999, np.NaN)
+df_all['AQI'] = df_all['AQI'].replace(-999, np.NaN)
+
+
 # Group and aggregate to get mean and number of observations for variables per year/month for every observation
 df_grouped = df_all.groupby(['Latitude', 'Longitude','Parameter', 'Unit', 
             'Category', 'SiteName', 'AgencyName','FullAQSCode', 
@@ -47,7 +52,7 @@ df_grouped = df_all.groupby(['Latitude', 'Longitude','Parameter', 'Unit',
                                         'AQI':['mean', 'count']})
 # Flatten hierarchial index
 df_grouped.columns = ['_'.join(col).strip('_') for col in df_grouped.columns]
-
+df_grouped = df_grouped.reset_index()
 # Make it a geodataframe
 gdf_all = gpd.GeoDataFrame(df_grouped, 
                             geometry=gpd.points_from_xy(df_grouped.Longitude, df_grouped.Latitude)).reset_index(drop=True)

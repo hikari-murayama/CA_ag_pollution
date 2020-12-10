@@ -70,6 +70,7 @@ from pytz import timezone
 # Loop through dates
 counting = 0 
 
+time.sleep(3610)
 # Loop through years
 for i in range(2016,2017):
 # Loop through months
@@ -77,7 +78,7 @@ for i in range(2016,2017):
     df_all = pd.DataFrame()
     
     for j in range(12):
-        if i==2016 and j==0:
+        if i==2016 and j<=10:
             continue
 
         start_month = str(j+1).zfill(2)
